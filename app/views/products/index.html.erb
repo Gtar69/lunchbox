@@ -1465,11 +1465,23 @@
   </div>
 
     <script type="text/javascript">
+    var geocoder = new google.maps.Geocoder();
+var address = "Lane 140, Yucheng St, Nangang District, Taipei City";
+var latitude;var longitude;
+
+geocoder.geocode( { 'address': address}, function(results, status) {
+  if (status == google.maps.GeocoderStatus.OK) {
+    latitude = results[0].geometry.location.lat();
+    longitude = results[0].geometry.location.lng();
+    alert(latitude);
+  }
+});
+
       var handler = Gmaps.build('Google');
       handler.buildMap({ internal: {id: 'multi_markers'}}, function(){
   var markers = handler.addMarkers([
-    { lat: 43, lng: 3.5},
     { lat: 45, lng: 4},
+    { lat: latitude, lng: longitude}
 
   ]);
   handler.bounds.extendWith(markers);
