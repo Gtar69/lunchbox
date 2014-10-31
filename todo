@@ -5,6 +5,8 @@
 
  2. business feature
  ☐ Customer can know transportation fee from the map
-      ☐ User enter delivery address in the console => API parse into exact position => API take this parameter to caculate driving distance between store and delivery location
-      ☐  implenmentation of formula of taxi transportation fee
-      ☐  implenmentation of discount logic
+      ✔ User enter delivery address in the console => API parse into exact position => API take this parameter to caculate driving distance between store and delivery location @done (14-10-31 15:21)
+      ✔  implenmentation of formula of taxi transportation fee @done (14-10-31 15:21)
+      ✔  implenmentation of discount logic @done (14-10-31 15:21)
+      ☐  layout improvement
+            ☐ address input console

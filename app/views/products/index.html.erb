@@ -1350,9 +1350,78 @@
         <p>One hour delivery is free and guaranteed within the area shown above. There is a service charge of 10 USD per 1km outside of this area. We can not guarantee delivery time outside the designated area. Please <strong>call +1 212-947-3838 to make sure</strong> you are inside free delivery zone.
         </p>
       </div>
-
+<div class="col-md-12" style="text-align:center">
+        <input id="address" type="textbox" value="Tapei 101">
+        <input type="button" value="Geocode" onclick="codeAddress()">
+</div>
+      <div><b style="font-size: 100%; font-family: monospace; font-weight: bold">Taxi Fee</b>
+      <div id ="taxi-fee"></div></div>
     </div>
   </div>
+
+  <script>
+    var service;
+
+    function codeAddress() {
+      geocoder = new google.maps.Geocoder();
+      var address = document.getElementById('address').value;
+      geocoder.geocode( { 'address': address}, function(results, status) {
+        if (status == google.maps.GeocoderStatus.OK) {
+          //alert(results[0].geometry.location);
+          var lat =  results[0].geometry.location.lat();
+          var lng =  results[0].geometry.location.lng();
+          var markers = handler.addMarkers([{ lat: lat, lng: lng}]);
+          handler.bounds.extendWith(markers);
+          handler.fitMapToBounds();
+          caculateTaxiFee(lat,lng);
+          //caculate transport fee
+        } else {
+          alert('Geocode was not successful for the following reason: ' + status);
+        }
+      });
+    }
+
+    function caculateTaxiFee(lat,lng){
+      var service = new google.maps.DistanceMatrixService();
+      var origin1 = new google.maps.LatLng(25.044818, 121.582993);
+      var origin2 = "restaurant";
+      var destinationA = new google.maps.LatLng(lat,lng);
+      var destinationB = "delivery_loc";
+      service.getDistanceMatrix(
+        {
+          origins: [origin1, origin2],
+          destinations: [destinationA, destinationB],
+          travelMode: google.maps.TravelMode.DRIVING,
+          avoidHighways: false,
+          avoidTolls: false
+        },
+      callback);
+      function callback(response, status) {
+        if (status == google.maps.DistanceMatrixStatus.OK) {
+          var origins = response.originAddresses;
+          var destinations = response.destinationAddresses;
+          for (var i = 0; i < origins.length; i++) {
+            var results = response.rows[i].elements;
+            for (var j = 0; j < results.length; j++) {
+              var element = results[j];
+              var distance = element.distance.text;
+              var dsm = parseFloat(distance);
+              dsm *= 1000;
+              var zzz=Math.ceil((dsm-1250)/250)*5+70 ;
+              var xxxzz=Math.max(zzz,70) ;
+              var zzzxx=(Math.floor((xxxzz-70)/5/4)+(xxxzz-70)/5+2)*5+70 ;
+              document.getElementById("taxi-fee").innerHTML = "Taxi fee" +zzzxx;
+            }
+          }
+        }
+      }
+    }
+
+
+  </script>
+
+
+
       <!-- Footer Start -->
 
       <div class="footer padd">
@@ -1467,85 +1536,36 @@
 
 
 
-    <script type="text/javascript">
-      var geocoder = new google.maps.Geocoder();
-      var address = "No. 140, Yucheng St, Nangang District, Taipei City";
-      var latitude,longitude;
-
-      geocoder.geocode( { 'address': address}, function(results, status) {
-        if (status == google.maps.GeocoderStatus.OK) {
-          latitude = results[0].geometry.location.lat();
-          longitude = results[0].geometry.location.lng();
-          //alert(latitude);
-        }
-      });
-
-      var handler = Gmaps.build('Google');
-      handler.buildMap({ internal: {id: 'multi_markers'}}, function(){
-        var markers = handler.addMarkers([{ lat: latitude, lng: longitude}]);
-        handler.bounds.extendWith(markers);
-        handler.fitMapToBounds();
-      });
-
-      // draw region
-      var polylines = handler.addPolylines([
-        [
-
-          {lat: 25.056948, lng: 121.617582},
-          {lat: 25.062517, lng: 121.617057}
-        ]
-      ],{ strokeColor: '#FF0000'});
-
-        handler.bounds.extendWith(polylines);
+  <script type="text/javascript">
+    var geocoder = new google.maps.Geocoder();
+    var address = "No. 140, Yucheng St, Nangang District, Taipei City";
+    var latitude,longitude;
 
 
-    var origin1 = new google.maps.LatLng(25.044818, 121.582993);
-    var origin2 = "TPE";
-    var destinationA = "Neihi";
-    var destinationB = new google.maps.LatLng(25.062517, 121.617057);
-
-    var service = new google.maps.DistanceMatrixService();
-    service.getDistanceMatrix(
-      {
-        origins: [origin1, origin2],
-        destinations: [destinationA, destinationB],
-        travelMode: google.maps.TravelMode.DRIVING,
-        avoidHighways: false,
-        avoidTolls: false
-      },
-    callback);
-
-    function callback(response, status) {
-      alert("callback start from here :~");
-      if (status == google.maps.DistanceMatrixStatus.OK) {
-        var origins = response.originAddresses;
-        var destinations = response.destinationAddresses;
-
-        for (var i = 0; i < origins.length; i++) {
-          var results = response.rows[i].elements;
-          for (var j = 0; j < results.length; j++) {
-            var element = results[j];
-            var distance = element.distance.text;
-
-            var dsm = parseFloat(distance);
-            //alert(dsm);
-            dsm *= 1000;
-            //alert("2nd dsm"+ dsm);
-            var zzz=Math.ceil((dsm-1250)/250)*5+70 ;
-            //alert("zzz"+ zzz);
-            var xxxzz=Math.max(zzz,70) ;
-            //alert("xxxzz"+xxxzz)
-            var zzzxx=(Math.floor((xxxzz-70)/5/4)+(xxxzz-70)/5+2)*5+70 ;
-            alert("taxi fee"+ zzzxx);
-            //var duration = element.duration.text;
-            //var from = origins[i];
-            //var to = destinations[j];
-          }
-        }
+    geocoder.geocode( { 'address': address}, function(results, status) {
+      if (status == google.maps.GeocoderStatus.OK) {
+        latitude = results[0].geometry.location.lat();
+        longitude = results[0].geometry.location.lng();
       }
-    }
+    });
 
-    </script>
+    var handler = Gmaps.build('Google');
+    handler.buildMap({ internal: {id: 'multi_markers'}}, function(){
+      var markers = handler.addMarkers([{ lat: latitude, lng: longitude}]);
+      handler.bounds.extendWith(markers);
+      handler.fitMapToBounds();
+    });
+        // draw region
+       /* var polylines = handler.addPolylines([
+          [
+
+            {lat: 25.056948, lng: 121.617582},
+            {lat: 25.062517, lng: 121.617057}
+          ]
+        ],{ strokeColor: '#FF0000'});
+
+          handler.bounds.extendWith(polylines);*/
+  </script>
 
 
 
